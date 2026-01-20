@@ -15,10 +15,9 @@ namespace lab1
         private string _end;
         private double _dist;
         private double _time;
-        private double _stopTime;
 
-        public string Start {  get { return _start; }  set { _start = value; } }
-        public string End { get { return _end; } set { _end = value; } }
+        public string Start { get { return _start; } }
+        public string End { get { return _end; } }
         public double Dist { 
             get { return _dist; } 
             set { 
@@ -69,6 +68,7 @@ namespace lab1
                               $"Расстояние: {route1.Dist}км\n" +
                               $"Среднее время в пути: {route1.Time}ч");
 
+            Console.WriteLine();
             // Изменение времени маршрута 
             route1.Time = 4;
             Console.WriteLine($"Маршрут {route1.Start}-{route1.End} \n" +
