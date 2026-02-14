@@ -3,6 +3,7 @@ using OOP_lab1;
 
 namespace lab1
 {
+    // 18
     //"Маршрут":
     //  Класс `Route` с полями:
     //      точка отправления,
@@ -22,45 +23,24 @@ namespace lab1
     {
         static void Main(string[] args)
         {
-            List<IFareCollector> transports = new List<IFareCollector>()
-            {
-                new Bus(1, 50, "Diesel"),
-                new Tram(3, 100, 5),
-                new Taxi(0, 3, 100)
-            };
+            Route<Bus>.ScheduleChanged += message =>
+                           Console.WriteLine("Изменение расписания: " + message);
 
-            Console.WriteLine("------- Оплата -------");
-            foreach (IFareCollector transp in transports)
-            {
-                transp.collectFare(100);
-            }
+            var busRoute = new Route<Bus>("Городской маршрут");
 
-            Console.WriteLine("\n------- Информация -------");
-            List<PublicTransport> transportList = new List<PublicTransport>
-            {
-                new Bus(2, 40, "Газ"),
-                new Tram(7, 150, 1),
-                new Taxi(0, 4, 30)
-            };
+            busRoute.AddVehicle(new Bus(1, 50, "Дизель"));
+            busRoute.AddVehicle(new Bus(2, 40, "Газ"));
 
-            foreach (PublicTransport pt in transportList)
-            {
-                pt.Info();   
-                Console.WriteLine();
-            }
+            busRoute.StartRoute();
 
-            Console.WriteLine("\n ------- Преобразование типов -------");
-            PublicTransport ven = new Bus(54, 50, "Gas");
+            Console.WriteLine($"Эффективность маршрута: {busRoute.RouteEfficiency}");
 
-            if(ven is Bus)
-            {
-                Bus bus = (Bus)ven;
-                Console.WriteLine($"Downscaling через is\n Вызов дочернего метода: {bus.FuelType}");
-            }
+            busRoute.ChangeSchedule("Маршрут задерживается на 10 минут.");
 
-            PublicTransport ven2 = new Taxi(0, 3, 150);
-            Taxi taxi = ven2 as Taxi;
-            Console.WriteLine($"Downscaling через as:\n Вызов дочернего метода: {taxi.RatePerKm}");
+            Console.WriteLine($"Всего маршрутов автобусов создано: {Route<Bus>.TotalRoutesCreated}");
+
+            Console.WriteLine("\n=== Демонстрация приведения типов ===");
+            busRoute.ShowTransportInfo(new Bus(3, 45, "Электро"));
         }
     }
 }

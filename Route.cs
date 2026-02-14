@@ -1,60 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OOP_lab1
 {
-    class Route
+    public class Route<T> where T : PublicTransport
     {
-        private string _start;
-        private string _end;
-        private double _dist;
-        private double _time;
+        public List<T> Vehicles { get; private set; } = new List<T>();
 
-        public string Start { get { return _start; } }
-        public string End { get { return _end; } }
-        public double Dist
+        public string RouteName { get; set; }
+
+        public static int TotalRoutesCreated = 0;
+
+        public static event Action<string> ScheduleChanged;
+
+        public Route(string routeName)
         {
-            get { return _dist; }
-            set
+            RouteName = routeName;
+            TotalRoutesCreated++;
+        }
+
+        public void AddVehicle(T vehicle)
+        {
+            Vehicles.Add(vehicle);
+        }
+
+        public void StartRoute()
+        {
+            Console.WriteLine($"Маршрут {RouteName} начал движение.");
+            foreach (var v in Vehicles)
             {
-                if (value > 0)
-                    _dist = value;
+                v.Info();
             }
         }
-        public double Time
+
+        public double RouteEfficiency
         {
-            get { return _time; }
-            set
+            get
             {
-                if (value > 0)
-                    _time = value;
+                if (Vehicles.Count == 0) return 0;
+                int totalCapacity = 0;
+                foreach (var v in Vehicles)
+                    totalCapacity += v.Capacity;
+
+                return (double)totalCapacity / Vehicles.Count;
             }
         }
 
-        public Route(string start, string end, double dist, double time)
+        public void ChangeSchedule(string message)
         {
-            _start = start;
-            _end = end;
-            _dist = dist;
-            _time = time;
+            ScheduleChanged?.Invoke(message);
         }
 
-        public double AverageSpeed()
+        public void ShowTransportInfo<U>(U transport) where U : PublicTransport
         {
-            return _dist / _time;
-        }
+            PublicTransport pt = transport;
 
-        public void TotasTimeCalc(out double total, params double[] stopTimes)
-        {
-            total = 0;
-            foreach (var stop in stopTimes)
+            pt.Info();
+
+            if (pt is Bus)
             {
-                total += stop;
+                Bus bus = (Bus)pt;
+                Console.WriteLine("Это автобус с топливом: " + bus.FuelType);
             }
-            total += _time;
         }
     }
 }
